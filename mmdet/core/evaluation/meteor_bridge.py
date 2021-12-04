@@ -14,7 +14,7 @@ import subprocess
 import threading
 import mmcv
 
-from coco_caption.pycocoevalcap.meteor.meteor import Meteor
+from pycocoevalcap.meteor.meteor import Meteor
 
 
 class Meteor_(Meteor):

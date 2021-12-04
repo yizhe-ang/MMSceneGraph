@@ -16,7 +16,7 @@ import mmcv
 import numpy as np
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
-from coco_caption.pycocoevalcap.eval import COCOEvalCap
+from pycocoevalcap.eval import COCOEvalCap
 from terminaltables import AsciiTable
 
 from mmdet.core import eval_recalls

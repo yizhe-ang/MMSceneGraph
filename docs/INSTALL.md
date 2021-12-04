@@ -113,6 +113,30 @@ mkdir data
 ln -s $COCO_ROOT data
 ```
 
+### A from-scratch setup script (mine)
+Here is a full script for setting up MMSceneGraph with conda and link the dataset path (supposing that your COCO dataset path is $COCO_ROOT).
+
+```shell
+conda create -n mmsg python=3.8 -y
+conda activate mmsg
+
+conda install pytorch==1.4.0 torchvision==0.5.0 cudatoolkit=10.1 -c pytorch
+git clone https://github.com/Kenneth-Wong/MMSceneGraph.git
+cd MMSceneGraph
+pip install -r requirements/build.txt
+conda install -c psi4 gcc-5 (if required)
+pip install pycocotools
+pip install -v -e .
+
+pip install opencv-python
+pip install mmcv==0.4.3
+pip install nltk
+pip install pycocoevalcap
+
+mkdir data
+ln -s $COCO_ROOT data
+```
+
 ### Using multiple MMDetection versions
 
 If there are more than one mmdetection on your machine, and you want to use them alternatively, the recommended way is to create multiple conda environments and use different environments for different versions.

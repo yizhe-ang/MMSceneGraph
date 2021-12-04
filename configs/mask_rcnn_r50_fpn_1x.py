@@ -1,7 +1,7 @@
 # model settings
 model = dict(
     type='MaskRCNN',
-    pretrained='checkpoints/pytorch/resnet50-19c8e357.pth',
+    # pretrained='checkpoints/pytorch/resnet50-19c8e357.pth',
     backbone=dict(
         type='ResNet',
         depth=50,

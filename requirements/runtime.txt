@@ -5,7 +5,7 @@ numpy
 Pillow<=6.2.2
 six
 terminaltables
-torch>=1.4
+torch==1.4
 torchvision
 
 h5py
@@ -15,6 +15,6 @@ pdf2image
 tqdm
 future
 tensorboard
-yaml
+pyyaml
 anytree
 graphviz
