@@ -1,5 +1,7 @@
 data/
 work_dirs/
+new_experiments/
+checkpoints/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

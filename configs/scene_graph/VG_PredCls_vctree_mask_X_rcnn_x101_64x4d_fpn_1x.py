@@ -70,7 +70,8 @@ dataset_config = data['train'].copy()
 dataset_config.update(dict(cache=data_root + 'VG_statistics.cache'))
 model = dict(
     type='MaskRCNN',
-    pretrained='checkpoints/mmlab/imnet/resnext101_64x4d-ee2c6f71.pth',
+    # FIXME:
+    # pretrained='checkpoints/mmlab/imnet/resnext101_64x4d-ee2c6f71.pth',
     backbone=dict(
         type='ResNeXt',
         depth=101,
@@ -265,7 +266,8 @@ total_epochs = 12
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 work_dir = './new_experiments/VG_PredCls_vctree_mask_X_rcnn_x101_64x4d_fpn_1x'
-load_from = './experiments/VG_COCOremap_MASKTRANS_mask_rcnn_x101_64x4d_fpn_1x/latest.pth'
+# FIXME:
+# load_from = './experiments/VG_COCOremap_MASKTRANS_mask_rcnn_x101_64x4d_fpn_1x/latest.pth'
 # load_mapping = dict(align_dict={'relation_head.bbox_roi_extractor.visual_bbox_head': 'bbox_head.shared_fcs',
 #                                'relation_head.relation_roi_extractor.visual_bbox_head': 'bbox_head.shared_fcs'})
 resume_from = None
@@ -277,9 +279,10 @@ log_config = dict(
     hooks=[
         dict(type='TextLoggerHook'),
         dict(type='TensorboardLoggerHook'),
-        dict(type='WandbLoggerHook',
-             init_kwargs=dict(
-                 project=work_dir.split('/')[-1],
-                 name='train-1',
-                 config=work_dir + '/cfg.yaml'))
+        # FIXME:
+        # dict(type='WandbLoggerHook',
+        #      init_kwargs=dict(
+        #          project=work_dir.split('/')[-1],
+        #          name='train-1',
+        #          config=work_dir + '/cfg.yaml'))
     ])

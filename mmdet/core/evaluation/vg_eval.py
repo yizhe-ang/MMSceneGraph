@@ -27,6 +27,9 @@ def vg_evaluation(
         multiple_preds=False,
         predicate_freq=None,
         nogc_thres_num=None):
+
+    breakpoint()
+
     modes = mode if isinstance(mode, list) else [mode]
     result_container = dict()
     for m in modes:

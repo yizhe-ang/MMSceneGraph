@@ -1,7 +1,9 @@
 # model settings
 model = dict(
     type='FasterRCNN',
-    pretrained='checkpoints/mmlab/imnet/resnext101_64x4d-ee2c6f71.pth',
+    # FIXME:
+    # pretrained='checkpoints/mmlab/imnet/resnext101_64x4d-ee2c6f71.pth',
+    pretrained='checkpoints/faster_rcnn_x101_64x4d_fpn_1x_20181218-c9c69c8f.pth',
     backbone=dict(
         type='ResNeXt',
         depth=101,
@@ -186,7 +188,9 @@ log_config = dict(
 total_epochs = 12
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-work_dir = './experiments/VG_Detection_faster_rcnn_x101_64x4d_fpn_1x'
+# FIXME:
+work_dir = './new_experiments/VG_Detection_faster_rcnn_x101_64x4d_fpn_1x'
+# work_dir = './experiments/VG_Detection_faster_rcnn_x101_64x4d_fpn_1x'
 load_from = None
 resume_from = None
 workflow = [('train', 1), ('val', 1)]

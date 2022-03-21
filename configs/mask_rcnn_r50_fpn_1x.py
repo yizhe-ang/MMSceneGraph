@@ -1,6 +1,7 @@
 # model settings
 model = dict(
     type='MaskRCNN',
+    # FIXME:
     # pretrained='checkpoints/pytorch/resnet50-19c8e357.pth',
     backbone=dict(
         type='ResNet',
@@ -181,7 +182,9 @@ log_config = dict(
     ])
 # yapf:enable
 # runtime settings
-total_epochs = 12
+# FIXME:
+# total_epochs = 12
+total_epochs = 1
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 work_dir = './work_dirs/mask_rcnn_r50_fpn_1x'

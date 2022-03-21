@@ -149,6 +149,8 @@ def main():
 
     mmcv.dump(yaml.safe_load(cfg.dump()), osp.join(cfg.work_dir, 'cfg.yaml'))
 
+    # DEBUG: Check out dataset here?
+
     train_detector(
         model,
         datasets,

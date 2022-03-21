@@ -114,9 +114,11 @@ class VisualGenomeDataset(CocoDataset):
         self.proposal_file = None
         self.proposals = None
 
+        # FIXME: Do I need this? How about background class?
+        # NOTE: 1-index here
         self.ind_to_classes, self.ind_to_predicates, self.ind_to_attributes = load_info(
             dict_file)  # contiguous 151, 51 containing __background__
-        # drop background
+        # NOTE: drop background, 0-index
         VisualGenomeDataset.CLASSES, VisualGenomeDataset.PREDICATES, \
         VisualGenomeDataset.ATTRIBUTES = self.ind_to_classes[1:], self.ind_to_predicates[1:], self.ind_to_attributes
 
@@ -147,6 +149,7 @@ class VisualGenomeDataset(CocoDataset):
                 setattr(self, k.split('_')[0] + '_map', h5py.File(v, 'r')['images'])
 
         # add other infos to be used in result2json: transform the 0-base results from models to 1-base (used in GT)
+        # NOTE:
         self.cat_ids = list(range(1, len(self.CLASSES) + 1))
         self.coco = self.cocoapi()
 
@@ -157,6 +160,7 @@ class VisualGenomeDataset(CocoDataset):
 
         # When printing the evaluation result, the freq maybe useful.
         # must be ensure that at least run training process once, or ensure the file exists.
+        # FIXME: Do we need this file?
         predicate_freq_file = osp.join('/'.join(self.roidb_file.split('/')[:-1]), 'predicate_freq.pickle')
         if self.split == 'train':
             if osp.isfile(predicate_freq_file):
@@ -182,6 +186,7 @@ class VisualGenomeDataset(CocoDataset):
                              'iscrowd': 0,
                              })
         auxcoco.dataset = {'images': self.img_infos,
+                            # NOTE:
                            'categories': [{'id': i + 1, 'name': name} for i, name in enumerate(self.CLASSES)],
                            'annotations': anns}
         auxcoco.createIndex()
@@ -207,6 +212,7 @@ class VisualGenomeDataset(CocoDataset):
 
         gt_scenes = self.scenes[idx] if self.scenes is not None else None
 
+        # Process relations here
         gt_rels = self.relationships[idx].copy()
         if self.filter_duplicate_rels:
             # Filter out dupes!
@@ -228,12 +234,14 @@ class VisualGenomeDataset(CocoDataset):
         num_box = len(gt_bboxes)
         relation_map = np.zeros((num_box, num_box), dtype=np.int64)
         for i in range(gt_rels.shape[0]):
+            # If already exists a relation?
             if relation_map[int(gt_rels[i, 0]), int(gt_rels[i, 1])] > 0:
                 if random.random() > 0.5:
                     relation_map[int(gt_rels[i, 0]), int(gt_rels[i, 1])] = int(gt_rels[i, 2])
             else:
                 relation_map[int(gt_rels[i, 0]), int(gt_rels[i, 1])] = int(gt_rels[i, 2])
 
+        # NOTE: Data format here
         ann = dict(
             bboxes=gt_bboxes,
             labels=gt_labels,
@@ -287,6 +295,7 @@ class VisualGenomeDataset(CocoDataset):
         self.pre_pipeline(results)
         return self.pipeline(results)
 
+    # FIXME: Are the statistics required?
     def get_statistics(self):
         fg_matrix, bg_matrix = get_VG_statistics(self, self.filter_non_overlap)
         eps = 1e-3
@@ -374,9 +383,9 @@ class VisualGenomeDataset(CocoDataset):
                  logger=None,
                  jsonfile_prefix=None,
                  classwise=False,
-                 multiple_preds=False,
+                 multiple_preds=False,  # NOTE: What is this?
                  iou_thrs=0.5,
-                 nogc_thres_num=None,
+                 nogc_thres_num=None,  # NOTE: What is this?
                  **kwargs):
         """
         **kwargs: contain the paramteters specifically for OD, e.g., proposal_nums.
@@ -387,8 +396,11 @@ class VisualGenomeDataset(CocoDataset):
             else, perform scene graph evaluation.
         """
         metrics = metric if isinstance(metric, list) else [metric]
+
+        # Available metrics
         allowed_sg_metrics = ['predcls', 'sgcls', 'sgdet']
         allowed_od_metrics = ['bbox', 'segm', 'proposal', 'proposal_fast']
+
         sg_metrics, od_metrics = [], []
         for m in metrics:
             if m in allowed_od_metrics:
@@ -413,8 +425,9 @@ class VisualGenomeDataset(CocoDataset):
                                                              classwise=classwise,
                                                              iou_thrs=iou_thrs,
                                                              **kwargs)
+
         if len(sg_metrics) > 0:
-            """ 
+            """
                 Invoke scenen graph evaluation. prepare the groundtruth and predictions.
                 Transform the predictions of key-wise to image-wise.
                 Both the value in gt_results and det_results are numpy array.

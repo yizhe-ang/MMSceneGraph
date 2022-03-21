@@ -86,6 +86,7 @@ class TwoStageDetector(BaseDetector, RPNTestMixin, BBoxTestMixin,
 
         self.with_point = with_point
 
+        # FIXME: What tis for
         # cache the detection results to speed up the sgdet training.
         self.rpn_results = dict()
         self.det_results = dict()
@@ -152,6 +153,7 @@ class TwoStageDetector(BaseDetector, RPNTestMixin, BBoxTestMixin,
             if self.with_shared_head:
                 bbox_feats = self.shared_head(bbox_feats)
             cls_score, bbox_pred = self.bbox_head(bbox_feats)
+            # FIXME: What tis for?
             if self.bbox_head.__class__.__name__ == 'ExtrDetWeightSharedFCBBoxHead':
                 det_weight = self.bbox_head.det_weight_hook()
             else:
@@ -164,6 +166,7 @@ class TwoStageDetector(BaseDetector, RPNTestMixin, BBoxTestMixin,
                 x[:self.mask_roi_extractor.num_inputs], mask_rois)
             if self.with_shared_head:
                 mask_feats = self.shared_head(mask_feats)
+            # FIXME: What tis for?
             if self.mask_head.__class__.__name__ == 'TransferMaskHead':
                 assert det_weight is not None
                 mask_input = (mask_feats, det_weight)
@@ -269,8 +272,8 @@ class TwoStageDetector(BaseDetector, RPNTestMixin, BBoxTestMixin,
                 raise ValueError('The basic detector did not provide masks.')
 
             """
-            NOTE: (for VG) When the gt masks is None, but the head needs mask, 
-            we use the gt_box and gt_label (if needed) to generate the fake mask. 
+            NOTE: (for VG) When the gt masks is None, but the head needs mask,
+            we use the gt_box and gt_label (if needed) to generate the fake mask.
             """
             bboxes, labels, target_labels, \
             dists, masks, points = self.detector_simple_test(x, img_meta, gt_bboxes, gt_labels,
@@ -689,10 +692,14 @@ class TwoStageDetector(BaseDetector, RPNTestMixin, BBoxTestMixin,
 
         """RPN phase"""
         num_levels = len(x)
+        # List[Tensor[(1000, 5)]]
         proposal_list = self.simple_test_rpn(x, img_meta, self.test_cfg.rpn)
+
+        breakpoint()
 
         """Support multi-image per batch"""
         det_bboxes, det_labels, score_dists = [], [], []
+        # img_meta: List[metadata]
         for img_id in range(len(img_meta)):
             x_i = tuple([x[i][img_id][None] for i in range(num_levels)])
             img_meta_i = [img_meta[img_id]]
@@ -764,8 +771,8 @@ class TwoStageDetector(BaseDetector, RPNTestMixin, BBoxTestMixin,
             raise ValueError('The basic detector did not provide masks.')
 
         """
-        NOTE: (for VG) When the gt masks is None, but the head needs mask, 
-        we use the gt_box and gt_label (if needed) to generate the fake mask. 
+        NOTE: (for VG) When the gt masks is None, but the head needs mask,
+        we use the gt_box and gt_label (if needed) to generate the fake mask.
         """
 
         # Rescale should be forbidden here since the bboxes and masks will be used in relation module.
@@ -785,8 +792,8 @@ class TwoStageDetector(BaseDetector, RPNTestMixin, BBoxTestMixin,
         det_result = self.relation_head(x, img_meta, det_result, is_testing=True, ignore_classes=ignore_classes)
 
         """
-        Transform the data type, and rescale the bboxes and masks if needed 
-        (for visual, do not rescale, for evaluation, rescale). 
+        Transform the data type, and rescale the bboxes and masks if needed
+        (for visual, do not rescale, for evaluation, rescale).
         """
         scale_factor = img_meta[0]['scale_factor']
         return self.relation_head.get_result(det_result, scale_factor, rescale=rescale, key_first=key_first)

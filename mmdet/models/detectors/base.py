@@ -208,6 +208,7 @@ class BaseDetector(nn.Module, metaclass=ABCMeta):
         assert len(imgs) == len(img_metas)
 
         if dataset is None:
+            # 0-index
             class_names = self.CLASSES
             predicate_names = self.PREDICATES
         elif isinstance(dataset, str):
@@ -224,9 +225,11 @@ class BaseDetector(nn.Module, metaclass=ABCMeta):
             gt_bboxes = [d.numpy() for d in gt_bboxes][0]
         if 'gt_labels' in data:
             gt_labels = data['gt_labels'][0].data[0]
+            # FIXME: gt_labels is 1-index
             gt_labels = [d.numpy() - 1 for d in gt_labels][0]  # remember -1 for visualization
         if 'gt_rels' in data:
             gt_rels = data['gt_rels'][0].data[0]
+            # FIXME: gt_rels is 1-index
             gt_rels[:, -1] = gt_rels[:, -1] - 1
             gt_rels = gt_rels.numpy()
             # tmp = []
@@ -242,8 +245,11 @@ class BaseDetector(nn.Module, metaclass=ABCMeta):
             # main result for visualization
             bboxes = result.refine_bboxes  # (array [N, 5]): bboxes + obj_scores
             rels = result.rels.copy()
+            # FIXME: rels is 1-index
             rels[:, -1] = rels[:, -1] - 1  # (array [Nr, 3]): pair indexes, rel labels
+            # FIXME: just take the first k??
             rels = rels[:num_rel, :]  # default
+            # FIXME: 1-index
             object_classes = result.refine_labels - 1  # (array [N, ]): object classes, 1-based
 
             # auxiliary information, you can choose to visualize it or not

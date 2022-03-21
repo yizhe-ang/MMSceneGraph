@@ -226,7 +226,15 @@ class RelationHead(nn.Module):
         roi_feats = self.bbox_roi_extractor(img, img_meta, rois, masks=masks, points=points)
         union_feats = self.relation_roi_extractor(img, img_meta, rois,
                                                   rel_pair_idx=rel_pair_idxes, masks=masks, points=points)
-        return roi_feats + union_feats + (det_result,)
+
+        # breakpoint()
+        # roi_feats, ([92, 1024],)
+        # union_feats, ([1352, 1024],)
+        # det_result, Result object
+
+        # FIXME: Tensor + Tuple??
+        # return roi_feats + union_feats + (det_result,)
+        return roi_feats, union_feats, det_result
 
     def forward(self, **kwargs):
         raise NotImplementedError
